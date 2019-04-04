@@ -25,7 +25,7 @@ SECRET_KEY = '+lin(tuyub$e4a(-xt2%5oexwj=7-3cmlvcx$!al+_f+hxhm77'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['Instantler-env.fgpxny9mnw.us-east-2.elasticbeanstalk.com', '127.0.0.1', "localhost"]
 
 
 # Application definition
@@ -37,9 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Restaurant',
+    'User',
+    'rest_framework',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -48,6 +53,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_WHITELIST = (
+    'localhost:3000/'
+)
 
 ROOT_URLCONF = 'instantler.urls'
 
@@ -75,8 +84,12 @@ WSGI_APPLICATION = 'instantler.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'instantler_db',
+        'USER': 'postgres',
+        'PASSWORD': 'Yanyujia0709',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
