@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.db import models
 from .utils import uuidToStr
 from User.models import *
+from django.contrib.auth.models import User
+
 
 '''
 class Rest(models.Model):
@@ -35,6 +37,7 @@ class RestInfo(models.Model):
 '''
 
 class Restaurant(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     yelp_id = models.CharField(default=uuidToStr, max_length=100,blank=True)
     address = models.CharField(max_length=30, null=True)
     city = models.CharField(max_length=20)

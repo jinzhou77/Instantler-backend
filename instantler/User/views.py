@@ -8,6 +8,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import authenticate
 from .models import *
+from Restaurant.models import Restaurant
+from django.core.exceptions import ObjectDoesNotExist
+from django.forms.models import model_to_dict
 
 ## TODO: Need super user authentication
 class UserViewSet(viewsets.ModelViewSet):
@@ -17,8 +20,35 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return (AllowAny(),)
         else:
-            #return (AllowAny(),)
-            return (IsAuthenticated(),)
+            return (AllowAny(),)
+            #return (IsAuthenticated(),)
+
+
+    def retrieve(self, request, pk=None):
+        try:
+            is_restaurant = UserType.objects.get(user=pk).is_restaurant
+            user_obj = User.objects.get(id=pk)
+            res = {}
+            res["user"] = user_obj.id
+            res["username"] = user_obj.username
+            res["email"] = user_obj.email
+            res["first_name"] = user_obj.first_name
+            res["last_name"] = user_obj.last_name
+            res["last_login"] = user_obj.last_login
+            res["date_joined"] = user_obj.date_joined
+            if is_restaurant:
+                try:
+                    restaurant = Restaurant.objects.get(user=pk).id
+                except ObjectDoesNotExist:
+                    restaurant = 0
+                res["restaurant"] = restaurant
+                return Response(res, status=status.HTTP_200_OK)
+            else:
+                return Response(res, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+                return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
 
     def create(self, request):
         serializers = UserSerializerWithToken(data=request.data)
