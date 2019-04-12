@@ -25,5 +25,5 @@ urlpatterns = [
     path('api/', include('Table.urls')),
     path('api/', include('TakeANumber.urls')),
     path('api/', include('Reservation.urls')),
-    path('api/login', login)
+    path('api/login/', login)
 ]

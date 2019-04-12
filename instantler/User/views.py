@@ -23,6 +23,9 @@ class UserViewSet(viewsets.ModelViewSet):
         serializers = UserSerializerWithToken(data=request.data)
         if serializers.is_valid():
             serializers.save()
+            usertype = request.data.get("usertype")
+            instance = UserType(user = User.objects.get(username=request.data.get("username")), is_restaurant = True) if usertype == 'restaurant' else UserType(username = User.objects.get(username=request.data.get("username")), is_common = True)
+            instance.save()
             return Response(serializers.data, status=status.HTTP_201_CREATED)
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -36,22 +39,29 @@ class UserTypeViewSet(viewsets.ModelViewSet):
     serializer_class = UserTypeSerializer
 
 @csrf_exempt
-@api_view(['POST'])
+@api_view(['POST',])
 @permission_classes((AllowAny,))
 def login(request):
     username = request.data.get("username")
     password = request.data.get("password")
+    is_restaurant = request.data.get("is_restaurant", False)
+    if not is_restaurant:
+        is_common = request.data.get("is_common", False)
 
     if username is None or password is None:
-        return Response({'error': 'Please provide both username and password'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Please provide both username and password.'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         user = User.objects.get(username=username)
     except User.DoesNotExist:
-        return Response({'error': 'User Not Found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
     else:
         if user.check_password(password):
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key, 'id': user.id}, status=status.HTTP_200_OK)
+            userType = UserType.objects.get(user=user.id)
+            if (userType.is_restaurant and is_restaurant) or (userType.is_common and is_common):
+                return Response({'token': token.key, 'id': user.id}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'Incorrect user type.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'error': 'Invalid Password'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Invalid password.'}, status=status.HTTP_401_UNAUTHORIZED)

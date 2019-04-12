@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserType
-        fields = ('user', 'is_superUser', 'is_restaurant', 'is_common')
+        fields = ('user', 'is_restaurant', 'is_common')
 
 class UserSerializerWithToken(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
