@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import authenticate
+from .models import *
 
 ## TODO: Need super user authentication
 class UserViewSet(viewsets.ModelViewSet):
@@ -23,16 +24,43 @@ class UserViewSet(viewsets.ModelViewSet):
         serializers = UserSerializerWithToken(data=request.data)
         if serializers.is_valid():
             serializers.save()
-            usertype = request.data.get("usertype")
-            instance = UserType(user = User.objects.get(username=request.data.get("username")), is_restaurant = True) if usertype == 'restaurant' else UserType(username = User.objects.get(username=request.data.get("username")), is_common = True)
-            instance.save()
-            return Response(serializers.data, status=status.HTTP_201_CREATED)
+            try:
+                usertype = request.data.get("usertype")
+                instance = UserType(user = User.objects.get(username=request.data.get("username")), is_restaurant = True) if usertype == 'restaurant' else UserType(user = User.objects.get(username=request.data.get("username")), is_common = True)
+                instance.save()
+                preference_list = request.data.get("preference")
+                PreferenceViewSet.setPreference(User.objects.get(username=request.data.get("username")), preference_list)
+                return Response(serializers.data, status=status.HTTP_201_CREATED)
+            except:
+                instance = User.objects.get(username = request.data.get("username")).delete()
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PreferenceViewSet(viewsets.ModelViewSet):
     queryset = Preference.objects.all()
     serializer_class = PreferenceSerializer
+
+    def retrieve(self, request, pk=None):
+        ps = Preference.objects.filter(user = pk)
+        l = []
+        if ps:
+            l = [p.preference for p in ps]
+        return Response({"user":pk, "perference":l}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        self.setPreference(User.objects.get(id=pk), request.data.get("preference"))
+        return Response({"user":pk, "preference":request.data.get("preference")}, status=status.HTTP_200_OK)
+
+
+    @classmethod
+    def setPreference(self, user_obj, p_list):
+        if not UserType.objects.get(user = user_obj).is_common:
+            return
+        Preference.objects.filter(user = user_obj.id).delete()
+        for p in p_list:
+            instance = Preference(user=user_obj, preference=p)
+            instance.save()
+
 
 class UserTypeViewSet(viewsets.ModelViewSet):
     queryset = UserType.objects.all()
