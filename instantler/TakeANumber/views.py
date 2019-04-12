@@ -14,7 +14,6 @@ class WSNumberViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(restaurant=rest_id)
         return queryset
 
-
 class WaitingUserViewSet(viewsets.ModelViewSet):
 
     serializer_class = WaitingUserSerializer
@@ -25,6 +24,6 @@ class WaitingUserViewSet(viewsets.ModelViewSet):
         user_id = self.request.query_params.get('user', None)
         if rest_id is not None:
             queryset = queryset.filter(restaurant=rest_id)
-        if not user_id:
+        if user_id is not None:
             queryset = queryset.filter(user=user_id)
         return queryset

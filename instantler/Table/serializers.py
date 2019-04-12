@@ -12,4 +12,4 @@ class TableTypeSerializer(serializers.ModelSerializer):
 class TableDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = TableData
-        fields = ('id', 'tableType', 'remainNum', 'dateTime')
+        fields = ('id', 'tableType', 'restaurant', 'remainNum', 'dateTime')

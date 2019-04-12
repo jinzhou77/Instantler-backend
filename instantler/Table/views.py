@@ -8,8 +8,15 @@ from django.db import connection
 import pytz
 
 class TableTypeViewSet(viewsets.ModelViewSet):
-    queryset = TableType.objects.all()
+
     serializer_class = TableTypeSerializer
+
+    def get_queryset(self):
+        queryset = TableType.objects.all()
+        rest_id = self.request.query_params.get('restaurant', None)
+        if rest_id is not None:
+            queryset = queryset.filter(restaurant=rest_id)
+        return queryset
 
     def create(self, request):
         restaurant = request.data.get('restaurant')
@@ -37,8 +44,13 @@ class TableTypeViewSet(viewsets.ModelViewSet):
 
 
 class TableDataViewSet(viewsets.ModelViewSet):
-    queryset = TableData.objects.all()
     serializer_class = TableDataSerializer
+    def get_queryset(self):
+        queryset = TableData.objects.all()
+        rest_id = self.request.query_params.get('restaurant', None)
+        if rest_id is not None:
+            queryset = queryset.filter(restaurant=rest_id)
+        return queryset
 
 def iniGen(TableType, l, total):
     for time in l:
@@ -49,7 +61,7 @@ def iniGen(TableType, l, total):
         timeslot = datetime.strptime(time, "%H:%M:%S")
         daySeq = [s for s in datetime_range(st, et, timedelta(days=1))]
         for d in daySeq:
-            instance = TableData(tableType = TableType, remainNum=total, dateTime=d)
+            instance = TableData(tableType = TableType, restaurant= TableType.restaurant, remainNum=total, dateTime=d)
             instance.save()
 
 def datetime_range(start, end, delta):

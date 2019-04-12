@@ -11,5 +11,6 @@ class TableType(models.Model):
 
 class TableData(models.Model):
     tableType = models.ForeignKey(TableType, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True)
     remainNum = models.IntegerField(default=0)
     dateTime = DateTimeField(auto_now=False)

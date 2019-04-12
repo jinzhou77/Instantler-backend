@@ -5,7 +5,7 @@ from .models import *
 class ReservationInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReservationInfo
-        fields = ('id','type','user', 'guestNum')
+        fields = ('id','type','restaurant', 'user', 'guestNum')
 
 class PastOrderReviewSerializer(serializers.ModelSerializer):
     class Meta:
