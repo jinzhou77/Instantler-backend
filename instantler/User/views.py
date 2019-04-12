@@ -8,15 +8,15 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import authenticate
 
-
+## TODO: Need super user authentication
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
     def get_permissions(self):
         if self.action == 'create':
             return (AllowAny(),)
         else:
+            #return (AllowAny(),)
             return (IsAuthenticated(),)
 
     def create(self, request):
@@ -31,6 +31,9 @@ class PreferenceViewSet(viewsets.ModelViewSet):
     queryset = Preference.objects.all()
     serializer_class = PreferenceSerializer
 
+class UserTypeViewSet(viewsets.ModelViewSet):
+    queryset = UserType.objects.all()
+    serializer_class = UserTypeSerializer
 
 @csrf_exempt
 @api_view(['POST'])

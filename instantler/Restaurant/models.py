@@ -42,15 +42,19 @@ class Restaurant(models.Model):
     name = models.CharField(max_length=100)
     photo_url = models.CharField(max_length=200)
     zipcode = models.IntegerField()
+    ratings_sum = models.BigIntegerField(default=0)
+    ratings_count = models.IntegerField(default=0)
 
 
 class RestaurantCat(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
 
+'''
 class RestaurantReview(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    #user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField()
-    ratings = models.FloatField()
+    ratings = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now_add=True)
+'''

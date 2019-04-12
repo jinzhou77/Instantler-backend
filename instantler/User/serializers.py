@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Preference
+from .models import *
 from rest_framework.authtoken.models import Token
 from rest_framework_jwt.settings import api_settings
 
@@ -10,6 +10,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email', 'first_name', 'last_name', 'last_login', 'date_joined')
 
+class UserTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserType
+        fields = ('user', 'is_superUser', 'is_restaurant', 'is_common')
 
 class UserSerializerWithToken(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
@@ -40,4 +44,4 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 class PreferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Preference
-        fields = ('user', 'preference')  # user is the User's id
+        fields = ('id','user', 'preference')  # user is the User's id

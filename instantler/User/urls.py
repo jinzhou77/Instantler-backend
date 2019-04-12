@@ -3,8 +3,7 @@ from .views import *
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'users', UserViewSet, basename='user')
-router.register(r'users-preferences', PreferenceViewSet, basename='preference')
-
-
+router.register(r'users', UserViewSet)
+router.register(r'preferences', PreferenceViewSet)
+router.register(r'check-status', UserTypeViewSet)
 urlpatterns = router.urls
