@@ -17,7 +17,8 @@ class Restaurant(models.Model):
     photo_url = models.CharField(max_length=200)
     zipcode = models.IntegerField()
     ratings_count = models.IntegerField(default=0)
-    rating = models.IntegerField(default=1)
+    rating = models.DecimalField(default=1, decimal_places=1, max_digits=2)
+    price = models.CharField(max_length=10, null=True)
     phone_num = models.CharField(max_length=100, null=True)
 
 class RestaurantCat(models.Model):

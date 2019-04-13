@@ -30,8 +30,6 @@ class RestaurantViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(address=address)
         if city is not None:
             queryset = queryset.filter(city=city)
-
-
         return queryset
 
 
@@ -45,3 +43,10 @@ class RestaurantCatViewSet(viewsets.ModelViewSet):
         for c in cat_l:
             l += [c.title]
         return Response({"restaurant":pk, "categories":l}, status=status.HTTP_200_OK)
+
+    def get_queryset(self):
+        cat = self.request.query_params.get('catogory', None)
+        queryset = RestaurantCat.objects.all()
+        if cat is not None:
+            queryset = queryset.filter(title=cat)
+        return queryset
