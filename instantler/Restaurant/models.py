@@ -45,9 +45,8 @@ class Restaurant(models.Model):
     name = models.CharField(max_length=100)
     photo_url = models.CharField(max_length=200)
     zipcode = models.IntegerField()
-    ratings_sum = models.BigIntegerField(default=0)
     ratings_count = models.IntegerField(default=0)
-
+    rating = models.IntegerField(default=1)
 
 class RestaurantCat(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)

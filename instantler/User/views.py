@@ -12,6 +12,7 @@ from Restaurant.models import Restaurant
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 from .permissions import UserPermission
+from Restaurant.utils import *
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -111,6 +112,10 @@ class UserTypeViewSet(viewsets.ModelViewSet):
             return (AllowAny(),)
         else:
             return (IsAuthenticated(),UserPermission())
+
+class UserVectorViewSet(viewsets.ModelViewSet):
+    queryset = UserVector.objects.all()
+    serializer_class = UserVectorSerializer
 
 @csrf_exempt
 @api_view(['POST',])

@@ -15,6 +15,12 @@ class UserTypeSerializer(serializers.ModelSerializer):
         model = UserType
         fields = ('user', 'is_restaurant', 'is_common')
 
+
+class UserVectorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserVector
+        fields = ('user', "american", "seafood", "steak", "fast", "bar", "finedining", "chinese",  "japanese", "korean", "mexican", "pizza", "breakfast", "noodle", "italian", "mediterranean","french","vegetarian")
+
 class UserSerializerWithToken(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True)
