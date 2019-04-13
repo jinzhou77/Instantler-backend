@@ -18,7 +18,7 @@ class Restaurant(models.Model):
     zipcode = models.IntegerField()
     ratings_count = models.IntegerField(default=0)
     rating = models.IntegerField(default=1)
-    phone_num = models.CharField(max_length=100)
+    phone_num = models.CharField(max_length=100, null=True)
 
 class RestaurantCat(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
