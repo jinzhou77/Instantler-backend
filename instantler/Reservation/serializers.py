@@ -10,4 +10,4 @@ class ReservationInfoSerializer(serializers.ModelSerializer):
 class PastOrderReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = PastOrderReview
-        fields = ('id','restaurant', 'user','type', 'rating', 'description')  # user is the User's id
+        fields = ('id','restaurant', 'user', 'rating', 'description')  # user is the User's id

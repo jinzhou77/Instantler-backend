@@ -6,4 +6,5 @@ router = DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'preferences', PreferenceViewSet)
 router.register(r'user-type', UserTypeViewSet)
+router.register(r'user-vector', UserVectorViewSet)
 urlpatterns = router.urls

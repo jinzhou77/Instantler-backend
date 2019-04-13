@@ -26,7 +26,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
     def retrieve(self, request, pk=None):
-        print(request.method)
         try:
             is_restaurant = UserType.objects.get(user=pk).is_restaurant
             user_obj = User.objects.get(id=pk)
@@ -60,8 +59,9 @@ class UserViewSet(viewsets.ModelViewSet):
                 usertype = request.data.get("usertype")
                 instance = UserType(user = User.objects.get(username=request.data.get("username")), is_restaurant = True) if usertype == 'restaurant' else UserType(user = User.objects.get(username=request.data.get("username")), is_common = True)
                 instance.save()
-                preference_list = request.data.get("preference")
-                PreferenceViewSet.setPreference(User.objects.get(username=request.data.get("username")), preference_list)
+                if usertype == "common":
+                    preference_list = request.data.get("preference")
+                    PreferenceViewSet.setPreference(User.objects.get(username=request.data.get("username")), preference_list)
                 return Response(serializers.data, status=status.HTTP_201_CREATED)
             except:
                 instance = User.objects.get(username = request.data.get("username")).delete()
@@ -95,12 +95,22 @@ class PreferenceViewSet(viewsets.ModelViewSet):
 
     @classmethod
     def setPreference(self, user_obj, p_list):
-
         if not UserType.objects.get(user = user_obj).is_common:
             return
-        Preference.objects.filter(user = user_obj.id).delete()
+        ps = Preference.objects.filter(user = user_obj.id)
+        if ps:
+            for p in ps:
+                instance = UserVector.get(user=user_obj.id)
+                setattr(instance, p, getattr(instance, p) - initPreferenceWeight)
+                instance.save()
         for p in p_list:
             instance = Preference(user=user_obj, preference=p)
+            instance.save()
+            try:
+                instance = UserVector.objects.get(user=user_obj.id)
+            except ObjectDoesNotExist:
+                instance = UserVector(user=user_obj)
+            setattr(instance, p, getattr(instance, p) + initPreferenceWeight)
             instance.save()
 
 
@@ -116,6 +126,7 @@ class UserTypeViewSet(viewsets.ModelViewSet):
 class UserVectorViewSet(viewsets.ModelViewSet):
     queryset = UserVector.objects.all()
     serializer_class = UserVectorSerializer
+
 
 @csrf_exempt
 @api_view(['POST',])

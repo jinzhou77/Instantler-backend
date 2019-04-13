@@ -8,6 +8,11 @@ class RestaurantViewSet(viewsets.ModelViewSet):
 
     serializer_class = RestaurantSerializer
     def get_queryset(self):
+        user_id = self.request.query_params.get('user', None)
+        if user_id is not None:
+            queryset = Restaurant.objects.all()
+            queryset = queryset.filter(user=user_id)
+            return queryset
 
         name = self.request.query_params.get('name', None)
         address = self.request.query_params.get('address', None)
@@ -15,7 +20,6 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         popular = self.request.query_params.get('popular', False)
         if popular:
             queryset = Restaurant.objects.order_by('-rating','-ratings_count')
-            print("order")
         else:
             queryset = Restaurant.objects.all()
 
@@ -33,11 +37,3 @@ class RestaurantViewSet(viewsets.ModelViewSet):
 class RestaurantCatViewSet(viewsets.ModelViewSet):
     queryset = RestaurantCat.objects.all()
     serializer_class = RestaurantCatSerializer
-
-
-'''
-class RestaurantReviewViewSet(viewsets.ModelViewSet):
-    queryset = RestaurantReview.objects.all()
-    serializer_class = RestaurantReviewSerializer
-
-'''
