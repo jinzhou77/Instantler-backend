@@ -11,8 +11,8 @@ from .models import *
 from Restaurant.models import Restaurant
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
+from .permissions import UserPermission
 
-## TODO: Need super user authentication
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -20,11 +20,12 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return (AllowAny(),)
         else:
-            return (AllowAny(),)
-            #return (IsAuthenticated(),)
+            #return (AllowAny(),)
+            return (IsAuthenticated(),UserPermission())
 
 
     def retrieve(self, request, pk=None):
+        print(request.method)
         try:
             is_restaurant = UserType.objects.get(user=pk).is_restaurant
             user_obj = User.objects.get(id=pk)
@@ -70,20 +71,30 @@ class PreferenceViewSet(viewsets.ModelViewSet):
     queryset = Preference.objects.all()
     serializer_class = PreferenceSerializer
 
+    def get_permissions(self):
+        if self.action == 'create':
+            return (AllowAny(),)
+        else:
+            #return (AllowAny(),)
+            return (IsAuthenticated(),UserPermission())
+
     def retrieve(self, request, pk=None):
         ps = Preference.objects.filter(user = pk)
         l = []
-        if ps:
-            l = [p.preference for p in ps]
+        for p in ps:
+            l += [p.preference]
         return Response({"user":pk, "perference":l}, status=status.HTTP_200_OK)
 
     def update(self, request, pk=None):
+        if pk != request.user.id:
+            return Response({"detail": "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         self.setPreference(User.objects.get(id=pk), request.data.get("preference"))
         return Response({"user":pk, "preference":request.data.get("preference")}, status=status.HTTP_200_OK)
 
 
     @classmethod
     def setPreference(self, user_obj, p_list):
+
         if not UserType.objects.get(user = user_obj).is_common:
             return
         Preference.objects.filter(user = user_obj.id).delete()
@@ -95,6 +106,11 @@ class PreferenceViewSet(viewsets.ModelViewSet):
 class UserTypeViewSet(viewsets.ModelViewSet):
     queryset = UserType.objects.all()
     serializer_class = UserTypeSerializer
+    def get_permissions(self):
+        if self.action == 'create':
+            return (AllowAny(),)
+        else:
+            return (IsAuthenticated(),UserPermission())
 
 @csrf_exempt
 @api_view(['POST',])
