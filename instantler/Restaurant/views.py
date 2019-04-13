@@ -2,7 +2,8 @@ from __future__ import unicode_literals
 
 from .models import *
 from .serializers import *
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 
 class RestaurantViewSet(viewsets.ModelViewSet):
 
@@ -35,5 +36,12 @@ class RestaurantViewSet(viewsets.ModelViewSet):
 
 
 class RestaurantCatViewSet(viewsets.ModelViewSet):
-    queryset = RestaurantCat.objects.all()
     serializer_class = RestaurantCatSerializer
+    queryset = RestaurantCat.objects.all()
+
+    def retrieve(self, request, pk=None):
+        cat_l = RestaurantCat.objects.filter(restaurant=pk)
+        l = []
+        for c in cat_l:
+            l += [c.title]
+        return Response({"restaurant":pk, "categories":l}, status=status.HTTP_200_OK)
