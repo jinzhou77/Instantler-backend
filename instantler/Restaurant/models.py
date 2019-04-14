@@ -9,10 +9,9 @@ from django.contrib.auth.models import User
 
 class Restaurant(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
-    yelp_id = models.CharField(default=uuidToStr, max_length=100,blank=True)
-    address = models.CharField(max_length=30, null=True)
-    city = models.CharField(max_length=20)
-    state = models.CharField(max_length=10)
+    address = models.CharField(max_length=100, null=True)
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=50)
     name = models.CharField(max_length=100)
     photo_url = models.CharField(max_length=200)
     ratings_count = models.IntegerField(default=0)

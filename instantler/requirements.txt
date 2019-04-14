@@ -1,7 +1,13 @@
 Django==2.2
 django-cors-headers==2.5.2
 djangorestframework==3.9.2
+djangorestframework-jwt==1.11.0
+numpy==1.16.2
 psycopg2-binary==2.8
+PyJWT==1.7.1
 pytz==2018.9
+scikit-learn==0.20.3
+scipy==1.2.1
+sklearn==0.0
 sqlparse==0.3.0
-djangorestframework-jwt
+virtualenv==16.4.3

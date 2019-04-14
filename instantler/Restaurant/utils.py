@@ -11,4 +11,4 @@ ratePreferenceTable = {
     4:1,
     5:2
 }
-restaurantType = {"american", "seafood", "steak", "fast", "bar", "finedining", "chinese",  "japanese", "korean", "mexican", "pizza", "breakfast", "noodle", "italian", "mediterranean","french","vegetarian"}
+columnNames = ["user", "american", "seafood", "steak", "fast", "bar", "finedining", "chinese",  "japanese", "korean", "mexican", "pizza", "breakfast", "noodle", "italian", "mediterranean","french","vegetarian"]
