@@ -40,7 +40,7 @@ class TableTypeViewSet(viewsets.ModelViewSet):
         old_ins.supportedNum = supportedNum
         TableData.objects.filter(tableType=old_ins.id).delete()
         iniGen(old_ins, l, totalNum)
-        return Response({'restaurant': restaurant, 'type': type, 'supportedNum':supportedNum, 'totalNum':totalNum, 'periods':l}, status=status.HTTP_200_OK)
+        return Response({'id':old_ins.id,'restaurant': restaurant, 'type': type, 'supportedNum':supportedNum, 'totalNum':totalNum, 'periods':l}, status=status.HTTP_200_OK)
 
 
 class TableDataViewSet(viewsets.ModelViewSet):
