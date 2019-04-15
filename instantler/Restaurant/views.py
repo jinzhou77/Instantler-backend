@@ -85,10 +85,11 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         old_ins.rating = request.data.get('rating')
         old_ins.price = request.data.get('price')
         old_ins.phone_num = request.data.get('phone_num')
-        l = request.data.get('catogories')
+        l = request.data.get('categories')
         RestaurantCat.objects.filter(restaurant=old_ins.id).delete()
+        old_ins.save()
         iniGen(old_ins, l)
-        return Response({'id': old_ins.id, 'user': user, 'address': old_ins.address,'city': old_ins.city,'state': old_ins.state,'photo_url': old_ins.photo_url,'name': old_ins.name,'phone_num': old_ins.phone_num,'price': old_ins.price,'ratings_count': old_ins.ratings_count, 'rating':old_ins.rating,'catogories':l}, status=status.HTTP_200_OK)
+        return Response({'id': old_ins.id, 'user': user, 'address': old_ins.address,'city': old_ins.city,'state': old_ins.state,'photo_url': old_ins.photo_url,'name': old_ins.name,'phone_num': old_ins.phone_num,'price': old_ins.price,'ratings_count': old_ins.ratings_count, 'rating':old_ins.rating,'categories':l}, status=status.HTTP_200_OK)
 
     def create(self, request):
         global id
@@ -103,7 +104,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         rating = request.data.get('rating',1.0)
         price = request.data.get('price','$$')
         phone_num = request.data.get('phone_num',0)
-        l = request.data.get('catogories')
+        l = request.data.get('categories')
         old_ins = Restaurant(id=id,user=User.objects.get(pk=user), address=address,city=city,state=state,name=name,photo_url=photo_url,ratings_count=ratings_count,rating=rating,price=price,phone_num=phone_num)
         old_ins.save()
         iniGen(old_ins, l)
@@ -128,6 +129,7 @@ class RestaurantCatViewSet(viewsets.ModelViewSet):
         return queryset
 
 def iniGen(restaurant, l):
+    print(l)
     for cat in l:
         instance = RestaurantCat(restaurant = restaurant, title=cat)
         instance.save()
