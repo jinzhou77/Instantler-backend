@@ -62,7 +62,7 @@ def iniGen(TableType, l, total):
         timeslot = datetime.strptime(time, "%H:%M:%S")
         daySeq = [s for s in datetime_range(st, et, timedelta(days=1))]
         for d in daySeq:
-            instance = TableData(tableType = TableType, restaurant= TableType.restaurant, remainNum=total, dateTime=d)
+            instance = TableData(tableType = TableType, type = TableType.type, restaurant= TableType.restaurant, remainNum=total, dateTime=d)
             instance.save()
 
 def datetime_range(start, end, delta):

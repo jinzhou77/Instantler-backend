@@ -9,4 +9,4 @@ class WSNumberSerializer(serializers.ModelSerializer):
 class WaitingUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = WaitingUser
-        fields = ('id', 'user', 'restaurant', 'myNumber')
+        fields = ('id', 'user', 'restaurant', 'myNumber', 'first_name')
