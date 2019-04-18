@@ -47,6 +47,17 @@ class ReservationInfoViewSet(viewsets.ModelViewSet):
         table_data_obj.save()
         return Response({'id':instance.id,'restaurant':restaurant, 'user':user,'first_name':first_name, 'type':type,'dateTime':dateTime,'guestNum':guestNum}, status=status.HTTP_201_CREATED)
 
+    def destroy(self, request, pk=None):
+        if ReservationInfo.objects.filter(id=pk).exists():
+            # add table first
+            instance = ReservationInfo.objects.get(id=pk)
+            table_data_obj = TableData.objects.get(tableType=instance.type,dateTime=instance.dateTime)
+            table_data_obj.remainNum = table_data_obj.remainNum + 1
+            table_data_obj.save()
+            instance.delete()
+            return Response({'message':'Successful delete'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error':'The reservation does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PastOrderReviewViewSet(viewsets.ModelViewSet):
