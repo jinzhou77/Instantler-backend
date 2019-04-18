@@ -5,7 +5,7 @@ from .serializers import *
 from rest_framework import filters
 from User.models import *
 from django.contrib.auth.models import User
-from Restaurant.models import RestaurantCat
+from Restaurant.models import *
 from Restaurant.utils import *
 from rest_framework import viewsets,status
 from rest_framework.response import Response
@@ -82,15 +82,15 @@ class PastOrderReviewViewSet(viewsets.ModelViewSet):
         # create default value
         rest_id = request.data.get("restaurant")
         user_id = request.data.get("user")
-        rating = request.data.get("rating", 4.0)
+        rating = request.data.get("rating", 4)
         description = request.data.get("description", "")
         rated = request.data.get("rated", False)
 
-        #instance = PastOrderReview(restaurant=Restaurant.objects.get(id=request.data.get("restaurant")), user = User.objects.get(id = request.data.get("user")), rating = request.data.get("rating"), description = request.data.get("description"), rated = request.data.get("rated"))
-        #instance.save()
+        instance = PastOrderReview(restaurant=Restaurant.objects.get(id=request.data.get("restaurant")), user = User.objects.get(id = request.data.get("user")), rating = request.data.get("rating"), description = request.data.get("description"), rated = request.data.get("rated"))
+        instance.save()
 
-        sql = "INSERT INTO \"Reservation_pastorderreview\"(restaurant_id, user_id, rating, description, rated) VALUES({},{},{},\'{}\',{})".format(rest_id,user_id,rating,description,rated)
-        executeSQL(sql)
+        #sql = "INSERT INTO \"Reservation_pastorderreview\"(restaurant_id, user_id, rating, description, rated) VALUES({},{},{},\'{}\',{})".format(rest_id,user_id,rating,description,rated)
+        #executeSQL(sql)
 
         UVinstance = UserVector.objects.get(user=request.data.get("user"))
 
@@ -102,4 +102,25 @@ class PastOrderReviewViewSet(viewsets.ModelViewSet):
             delta = ratePreferenceTable[request.data.get("rating")]
             setattr(UVinstance, title, getattr(UVinstance, title) + delta)
         UVinstance.save()
-        return Response({'restaurant':request.data.get("restaurant"), 'user':request.data.get("user"),'rating':request.data.get("rating"), 'description':request.data.get("description")}, status=status.HTTP_201_CREATED)
+        return Response({'id':instance.id, 'restaurant':request.data.get("restaurant"), 'user':request.data.get("user"),'rating':request.data.get("rating"), 'description':request.data.get("description"), 'rated':rated}, status=status.HTTP_201_CREATED)
+
+    def update(self, request, pk=None):
+        rest_id = request.data.get("restaurant")
+        user_id = request.data.get("user")
+        rating = request.data.get("rating", 4)
+        description = request.data.get("description", "")
+        rated = request.data.get("rated", False)
+
+        instance = PastOrderReview.objects.get(id=pk)
+        instance.rating = rating
+        instance.description = description
+        instance.rated = rated
+        instance.save()
+        rest_obj = Restaurant.objects.get(id=rest_id)
+    
+        temp = rest_obj.ratings_count * rest_obj.rating + rating
+        rest_obj.ratings_count = rest_obj.ratings_count + 1
+        rest_obj.rating = temp / rest_obj.ratings_count
+
+        rest_obj.save()
+        return Response({'id':instance.id,'restaurant':rest_id, 'user':user_id,'rating':rating, 'description':description, 'rated':rated}, status=status.HTTP_200_OK)
