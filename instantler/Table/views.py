@@ -61,8 +61,16 @@ class TableDataViewSet(viewsets.ModelViewSet):
         rest_id = self.request.query_params.get('restaurant', None)
         tabletype = self.request.query_params.get('tabletype', None)
         time = self.request.query_params.get('datetime', None)
+        date = self.request.query_params.get('date', None)
         if time is not None:
             queryset = queryset.filter(dateTime=time)
+        else:
+            if date is not None:
+                date = datetime.strptime(date, "%Y-%m-%d")
+                st = datetime(date.year, date.month, date.day, 00, 00, 00, tzinfo=pytz.UTC)
+                et = datetime(date.year, date.month, date.day, 23, 59, 59, tzinfo=pytz.UTC)
+                queryset = queryset.filter(dateTime__lte=et,dateTime__gte=st)
+
         if rest_id is not None:
             queryset = queryset.filter(restaurant=rest_id)
         if tabletype is not None:
