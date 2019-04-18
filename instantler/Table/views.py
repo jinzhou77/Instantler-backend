@@ -59,7 +59,7 @@ class TableDataViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = TableData.objects.all()
         rest_id = self.request.query_params.get('restaurant', None)
-        tableType = self.request.query_params.get('tableType', None)
+        tabletype = self.request.query_params.get('tableType', None)
         if rest_id is not None:
             queryset = queryset.filter(restaurant=rest_id)
         if tableType is not None:
