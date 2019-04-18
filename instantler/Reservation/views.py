@@ -41,6 +41,7 @@ class ReservationInfoViewSet(viewsets.ModelViewSet):
         guestNum = request.data.get("guestNum")
         instance = ReservationInfo(restaurant=Restaurant.objects.get(id=restaurant), user=User.objects.get(id=user), first_name=first_name,type=TableType.objects.get(id=type), dateTime=dateTime,guestNum=guestNum)
         instance.save()
+        "UPDATE Table_tabledata SET remainNum = remainNum - 1 WHERE tableType_id = {} and dateTime = {}"
         table_data_obj = TableData.objects.get(tableType=type,dateTime=dateTime)
         table_data_obj.remainNum = table_data_obj.remainNum -1
         table_data_obj.save()

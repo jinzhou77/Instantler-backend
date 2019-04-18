@@ -38,7 +38,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
                         break
                     if city and rest.restaurant.city == city:
                         ids.add(rest.restaurant.id)
-                        i += 1
+                    i += 1
                 distr = getCategoryList(user_id, 10-i)
                 rest_lists = []
                 for index, count in enumerate(distr):
@@ -47,7 +47,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
                         continue
                     rest_lists += Restaurant.objects.raw("Select * from \"Restaurant_restaurant\" as T1 INNER JOIN \"Restaurant_restaurantcat\" as T2 ON T1.id = T2.restaurant_id WHERE title = \'{}\' Order By ratings_count*rating limit \'{}\';".format(type, count))
                     for rest in rest_lists:
-                        if city and rest.restaurant.city == city:
+                        if city and rest.city == city:
                             ids.add(rest.id)
 
                 rest_lists = list(ids)

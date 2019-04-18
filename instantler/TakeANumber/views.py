@@ -36,8 +36,10 @@ class WaitingUserViewSet(viewsets.ModelViewSet):
         queryset = WaitingUser.objects.all()
         rest_id = self.request.query_params.get('restaurant', None)
         myNumber = self.request.query_params.get('myNumber', None)
+
         if rest_id is not None:
-            queryset = queryset.filter(restaurant=rest_id)
+            servedNumber = WSNumber.objects.get(restaurant=rest_id).servedNumber
+            queryset = queryset.filter(restaurant=rest_id, myNumber__gte=servedNumber)
         if myNumber is not None:
             queryset = queryset.filter(myNumber=myNumber)
         return queryset
