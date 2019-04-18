@@ -8,6 +8,8 @@ def getSimilarUsers(user_id, num):
     querySet = UserVector.objects.all()
     params = querySet.values_list(*columnNames)
     UVs = np.array([arr for arr in params])
+    if len(UVs) == 1:
+        return []
     tmp = UVs[:,0].reshape((len(UVs)))
     targetIndex = (tmp == int(user_id))
     nonTargetIndex = (tmp != int(user_id))
@@ -23,7 +25,8 @@ def getSimilarUsers(user_id, num):
 def getCategoryList(user_id, num):
     querySet = UserVector.objects.filter(user=user_id)
     params = querySet.values_list(*columnNames)
-    UV = np.array([arr for arr in params])[0][1:]
+    UV = np.array([arr for arr in params])
+    UV = UV[0][1:]
     sum = np.sum(UV)
     distr = np.array([int(math.ceil(num*i/sum)) for i in UV])
     return(distr)
