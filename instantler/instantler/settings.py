@@ -25,7 +25,7 @@ SECRET_KEY = '+lin(tuyub$e4a(-xt2%5oexwj=7-3cmlvcx$!al+_f+hxhm77'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['Instantler-env.fgpxny9mnw.us-east-2.elasticbeanstalk.com', '127.0.0.1', "localhost"]
+ALLOWED_HOSTS = ['django-env.zdgjdsvavf.us-west-2.elasticbeanstalk.com', '127.0.0.1', "localhost"]
 
 
 # Application definition
@@ -96,16 +96,30 @@ WSGI_APPLICATION = 'instantler.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ['RDS_DB_NAME'],
+        'USER': os.environ['RDS_USERNAME'],
+        'PASSWORD': os.environ['RDS_PASSWORD'],
+        'HOST': os.environ['RDS_HOSTNAME'],
+        'PORT': os.environ['RDS_PORT'],
+    }
+}
+
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'instantler_db',
         'USER': 'postgres',
-        'PASSWORD': 'sola12321',
+        'PASSWORD': 'Yanyujia0709',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }
+
 
 
 # Password validation
@@ -145,3 +159,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static'

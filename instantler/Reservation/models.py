@@ -13,8 +13,10 @@ class ReservationInfo(models.Model):
     dateTime = DateTimeField(auto_now=False, null=True)
     guestNum = models.IntegerField(default=1)
 
+
 class PastOrderReview(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField(default=1)
-    description = models.TextField()
+    description = models.TextField(null=True)
+    rated = models.BooleanField(default=False)

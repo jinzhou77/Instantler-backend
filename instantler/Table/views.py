@@ -16,6 +16,7 @@ class TableTypeViewSet(viewsets.ModelViewSet):
         rest_id = self.request.query_params.get('restaurant', None)
         if rest_id is not None:
             queryset = queryset.filter(restaurant=rest_id)
+            print(rest_id)
         return queryset
 
     def create(self, request):

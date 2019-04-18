@@ -60,8 +60,9 @@ class UserViewSet(viewsets.ModelViewSet):
                 instance = UserType(user = User.objects.get(username=request.data.get("username")), is_restaurant = True) if usertype == 'restaurant' else UserType(user = User.objects.get(username=request.data.get("username")), is_common = True)
                 instance.save()
                 if usertype == "common":
-                    preference_list = request.data.get("preference")
-                    PreferenceViewSet.setPreference(User.objects.get(username=request.data.get("username")), preference_list)
+                    preference_list = request.data.get("preference", None)
+                    if preference_list:
+                        PreferenceViewSet.setPreference(User.objects.get(username=request.data.get("username")), preference_list)
                 return Response(serializers.data, status=status.HTTP_201_CREATED)
             except:
                 instance = User.objects.get(username = request.data.get("username")).delete()
