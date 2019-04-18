@@ -6,6 +6,7 @@ from datetime import datetime,timedelta, date
 from rest_framework.response import Response
 from django.db import connection
 import pytz
+from Reservation.models import ReservationInfo
 
 class TableTypeViewSet(viewsets.ModelViewSet):
 
@@ -43,6 +44,14 @@ class TableTypeViewSet(viewsets.ModelViewSet):
         old_ins.save()
         iniGen(old_ins, l, totalNum)
         return Response({'id':old_ins.id,'restaurant': restaurant, 'type': type, 'supportedNum':supportedNum, 'totalNum':totalNum, 'periods':l}, status=status.HTTP_200_OK)
+
+    def destroy(self, request, pk=None):
+
+        if ReservationInfo.objects.filter(type=pk, dateTime__gte = datetime.now()).exists():
+            return Response({'error':'Cannot delete due to future reservation.'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            TableType.objects.filter(id=pk).delete()
+            return Response({'Message':'OK'}, status=status.HTTP_200_OK)
 
 
 class TableDataViewSet(viewsets.ModelViewSet):
