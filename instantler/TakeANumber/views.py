@@ -3,6 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from Restaurant.models import Restaurant
 from django.contrib.auth.models import User
+from .utils import *
 
 ## TODO: Need super user authentication
 class WSNumberViewSet(viewsets.ModelViewSet):
@@ -47,11 +48,13 @@ class WaitingUserViewSet(viewsets.ModelViewSet):
     def create(self, request):
         user = request.data.get("user")
         restaurant = request.data.get("restaurant")
-        first_name = request.data.get("first_name")
+        first_name = request.data.get("first_name","")
         ws_obj = WSNumber.objects.get(restaurant=restaurant)
         ws_obj.waitingNumber = ws_obj.waitingNumber + 1
         ws_obj.save()
         myNumber = ws_obj.waitingNumber
-        instance = WaitingUser(first_name=first_name,restaurant = Restaurant.objects.get(id=restaurant), user = User.objects.get(id=user), myNumber=myNumber)
-        instance.save()
-        return Response({'id':instance.id, 'restaurant':restaurant, 'user':user, 'first_name':first_name, 'myNumber':myNumber}, status=status.HTTP_201_CREATED)
+        sql = "INSERT INTO \"TakeANumber_waitinguser\"(restaurant_id,user_id,\"first_name\", \"myNumber\") VALUES({},{},\'{}\',{});".format(restaurant, user, first_name, myNumber)
+        executeSQL(sql)
+        #instance = WaitingUser(first_name=first_name,restaurant = Restaurant.objects.get(id=restaurant), user = User.objects.get(id=user), myNumber=myNumber)
+        #instance.save()
+        return Response({'restaurant':restaurant, 'user':user, 'first_name':first_name, 'myNumber':myNumber},status=status.HTTP_201_CREATED)
