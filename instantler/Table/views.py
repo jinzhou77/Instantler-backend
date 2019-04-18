@@ -60,6 +60,9 @@ class TableDataViewSet(viewsets.ModelViewSet):
         queryset = TableData.objects.all()
         rest_id = self.request.query_params.get('restaurant', None)
         tabletype = self.request.query_params.get('tabletype', None)
+        time = self.request.query_params.get('datetime', None)
+        if time is not None:
+            queryset = queryset.filter(dateTime=time)
         if rest_id is not None:
             queryset = queryset.filter(restaurant=rest_id)
         if tabletype is not None:
