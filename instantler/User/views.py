@@ -18,7 +18,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action == 'create' or self.action == 'retrieve':
             return (AllowAny(),)
         else:
             #return (AllowAny(),)
@@ -74,7 +74,7 @@ class PreferenceViewSet(viewsets.ModelViewSet):
     serializer_class = PreferenceSerializer
 
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action == 'create' and self.action == 'retrieve':
             return (AllowAny(),)
         else:
             #return (AllowAny(),)
@@ -119,7 +119,7 @@ class UserTypeViewSet(viewsets.ModelViewSet):
     queryset = UserType.objects.all()
     serializer_class = UserTypeSerializer
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action == 'create' and self.action == 'retrieve':
             return (AllowAny(),)
         else:
             return (IsAuthenticated(),UserPermission())

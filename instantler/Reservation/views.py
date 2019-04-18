@@ -41,20 +41,25 @@ class ReservationInfoViewSet(viewsets.ModelViewSet):
         guestNum = request.data.get("guestNum")
         instance = ReservationInfo(restaurant=Restaurant.objects.get(id=restaurant), user=User.objects.get(id=user), first_name=first_name,type=TableType.objects.get(id=type), dateTime=dateTime,guestNum=guestNum)
         instance.save()
-        "UPDATE Table_tabledata SET remainNum = remainNum - 1 WHERE tableType_id = {} and dateTime = {}"
-        table_data_obj = TableData.objects.get(tableType=type,dateTime=dateTime)
-        table_data_obj.remainNum = table_data_obj.remainNum -1
-        table_data_obj.save()
+        sql = "UPDATE \"Table_tabledata\" SET \"remainNum\" = \"remainNum\" -1 WHERE \"tableType_id\"={} AND \"dateTime\" = \'{}\';".format(type,dateTime)
+        executeSQL(sql)
+        #table_data_obj = TableData.objects.get(tableType=type,dateTime=dateTime)
+        #table_data_obj.remainNum = table_data_obj.remainNum -1
+        #table_data_obj.save()
         return Response({'id':instance.id,'restaurant':restaurant, 'user':user,'first_name':first_name, 'type':type,'dateTime':dateTime,'guestNum':guestNum}, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, pk=None):
         if ReservationInfo.objects.filter(id=pk).exists():
             # add table first
             instance = ReservationInfo.objects.get(id=pk)
+            print(instance.type,instance.dateTime)
+            #sql = "UPDATE \"Table_tabledata\" SET \"remainNum\" = \"remainNum\" +1 WHERE \"tableType_id\"={} AND \"dateTime\" = \'{}\';".format(instance.type,instance.dateTime)
+            #executeSQL(sql)
             table_data_obj = TableData.objects.get(tableType=instance.type,dateTime=instance.dateTime)
             table_data_obj.remainNum = table_data_obj.remainNum + 1
             table_data_obj.save()
-            instance.delete()
+            sql = "DELETE FROM \"Reservation_reservationinfo\" WHERE id = {};".format(pk)
+            executeSQL(sql)
             return Response({'message':'Successful delete'}, status=status.HTTP_200_OK)
         else:
             return Response({'error':'The reservation does not exist'}, status=status.HTTP_400_BAD_REQUEST)
@@ -68,6 +73,7 @@ class PastOrderReviewViewSet(viewsets.ModelViewSet):
         user_id = self.request.query_params.get('user', None)
         if rest_id is not None:
             queryset = queryset.filter(restaurant=rest_id)
+
         if user_id is not None:
             queryset = queryset.filter(user=user_id)
         return queryset
@@ -85,7 +91,6 @@ class PastOrderReviewViewSet(viewsets.ModelViewSet):
 
         sql = "INSERT INTO \"Reservation_pastorderreview\"(restaurant_id, user_id, rating, description, rated) VALUES({},{},{},\'{}\',{})".format(rest_id,user_id,rating,description,rated)
         executeSQL(sql)
-
 
         UVinstance = UserVector.objects.get(user=request.data.get("user"))
 

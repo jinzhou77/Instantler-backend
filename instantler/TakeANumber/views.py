@@ -25,7 +25,7 @@ class WSNumberViewSet(viewsets.ModelViewSet):
         if servedNumber is not None:
             old_ins.servedNumber = servedNumber
         old_ins.save()
-        return Response({'restaurant':pk, 'waitingNumber':old_ins.waitingNumber, 'servedNumber':old_ins.servedNumber}, status=status.HTTP_200_OK)
+        return Response({'id':old_ins.id, 'restaurant':pk, 'waitingNumber':old_ins.waitingNumber, 'servedNumber':old_ins.servedNumber}, status=status.HTTP_200_OK)
 
 
 class WaitingUserViewSet(viewsets.ModelViewSet):
