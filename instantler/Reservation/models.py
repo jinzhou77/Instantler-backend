@@ -17,6 +17,6 @@ class ReservationInfo(models.Model):
 class PastOrderReview(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    rating = models.IntegerField(default=1)
+    rating = models.DecimalField(default=1.0, decimal_places=1, max_digits=2)
     description = models.TextField(null=True)
     rated = models.BooleanField(default=False)
