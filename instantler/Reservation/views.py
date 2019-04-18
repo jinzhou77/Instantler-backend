@@ -92,16 +92,6 @@ class PastOrderReviewViewSet(viewsets.ModelViewSet):
         #sql = "INSERT INTO \"Reservation_pastorderreview\"(restaurant_id, user_id, rating, description, rated) VALUES({},{},{},\'{}\',{})".format(rest_id,user_id,rating,description,rated)
         #executeSQL(sql)
 
-        UVinstance = UserVector.objects.get(user=request.data.get("user"))
-
-        cats = RestaurantCat.objects.raw("SELECT * FROM \"Restaurant_restaurantcat\" WHERE restaurant_id = {}".format(rest_id))
-
-        #cats = RestaurantCat.objects.filter(restaurant=request.data.get("restaurant"))
-        for cat in cats:
-            title = cat.title
-            delta = ratePreferenceTable[request.data.get("rating")]
-            setattr(UVinstance, title, getattr(UVinstance, title) + delta)
-        UVinstance.save()
         return Response({'id':instance.id, 'restaurant':request.data.get("restaurant"), 'user':request.data.get("user"),'rating':request.data.get("rating"), 'description':request.data.get("description"), 'rated':rated}, status=status.HTTP_201_CREATED)
 
     def update(self, request, pk=None):
@@ -117,10 +107,18 @@ class PastOrderReviewViewSet(viewsets.ModelViewSet):
         instance.rated = rated
         instance.save()
         rest_obj = Restaurant.objects.get(id=rest_id)
-    
         temp = rest_obj.ratings_count * rest_obj.rating + rating
         rest_obj.ratings_count = rest_obj.ratings_count + 1
         rest_obj.rating = temp / rest_obj.ratings_count
-
         rest_obj.save()
+        UVinstance = UserVector.objects.get(user=request.data.get("user"))
+        cats = RestaurantCat.objects.raw("SELECT * FROM \"Restaurant_restaurantcat\" WHERE restaurant_id = {}".format(rest_id))
+
+        #cats = RestaurantCat.objects.filter(restaurant=request.data.get("restaurant"))
+        for cat in cats:
+            title = cat.title
+            delta = ratePreferenceTable[request.data.get("rating")]
+            setattr(UVinstance, title, getattr(UVinstance, title) + delta)
+        UVinstance.save()
+
         return Response({'id':instance.id,'restaurant':rest_id, 'user':user_id,'rating':rating, 'description':description, 'rated':rated}, status=status.HTTP_200_OK)
